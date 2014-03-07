@@ -12,6 +12,7 @@ dotenv.load();
 
 var proxy = httpProxy.createProxyServer({});
 var host = process.env['FIREBASE_HOST'];
+var port = Number(process.env.PORT || 5000);
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -27,11 +28,11 @@ var server = require('http').createServer(function(req, res) {
         agent  : https.globalAgent
     });
 
-}).listen(8011);
+}).listen(port);
 
 proxy.on('proxyRes', function (res) {
     console.log('RAW Response from the target', JSON.stringify(res.headers, true, 2));
 });
 
 
-util.puts('Proxying '+ host +'. Server'.blue + ' started '.green.bold + 'on port '.blue + '8011'.yellow);
+util.puts('Proxying to '+ host +'. Server'.blue + ' started '.green.bold + 'on port '.blue + port);
