@@ -5,9 +5,13 @@ var https = require('https'),
     fs    = require('fs'),
     colors = require('colors'),
     url = require('url'),
-    httpProxy = require('http-proxy');
+    httpProxy = require('http-proxy'),
+    dotenv = require('dotenv');
+
+dotenv.load();
 
 var proxy = httpProxy.createProxyServer({});
+var host = process.env['FIREBASE_HOST'];
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -15,9 +19,10 @@ var server = require('http').createServer(function(req, res) {
     // You can define here your custom logic to handle the request
     // and then proxy the request.
     var path = url.parse(req.url, true).path;
-    req.headers.host = 'popping-fire-6738.firebaseio.com'
+
+    req.headers.host = host;
     proxy.web(req, res, {
-        target: 'https://popping-fire-6738.firebaseio.com'+path,
+        target: "https://"+host+path,
         secure: true,
         agent  : https.globalAgent
     });
@@ -29,4 +34,4 @@ proxy.on('proxyRes', function (res) {
 });
 
 
-util.puts('http proxy server'.blue + ' started '.green.bold + 'on port '.blue + '8011'.yellow);
+util.puts('Proxying '+ host +'. Server'.blue + ' started '.green.bold + 'on port '.blue + '8011'.yellow);
